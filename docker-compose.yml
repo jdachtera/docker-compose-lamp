@@ -1,0 +1,29 @@
+mysql:
+  image: "mysql:5.5"
+  name: mysql
+  restart: always
+  ports:
+    - "3306:3306"
+  #volumes:
+    #- "./volumes/mysql:/var/lib/mysql"
+  environment:
+    MYSQL_ROOT_PASSWORD: "osihfdsukjdnj"
+pydbgpproxy:
+  restart: always
+  build: ./src/pydbgpproxy
+  ports:
+    - "9001:9001"
+httpd:
+  build: ./src/httpd
+  name: apache-jdac.de
+  restart: always
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - "./volumes/sites-enabled:/etc/apache2/sites-enabled"
+    - "./volumes/htdocs:/var/www/html"
+    - "./volumes/ssl:/ssl"
+  links:
+    - mysql
+    - pydbgpproxy
